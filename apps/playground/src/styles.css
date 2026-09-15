@@ -1,0 +1,72 @@
+:root {
+  color: #e8edf5;
+  background: #0f1419;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+nav a {
+  color: #8ab4ff;
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 8px;
+}
+
+p,
+label {
+  color: #9aa7b8;
+}
+
+.panel {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+input[type='file'],
+select,
+input[type='number'] {
+  background: #1b232d;
+  color: inherit;
+  border: 1px solid #2c3948;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+button {
+  width: fit-content;
+  background: #3b82f6;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.status {
+  font-variant-numeric: tabular-nums;
+}
+
+img {
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid #2c3948;
+}

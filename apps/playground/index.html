@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@mdehub playground</title>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <a href="./">Vanilla</a>
+        <a href="./react.html">React</a>
+        <a href="./vue.html">Vue</a>
+      </nav>
+      <h1>@mdehub/core</h1>
+      <p>WASM image compression playground</p>
+      <form id="form" class="panel">
+        <input name="file" type="file" accept="image/*" />
+        <select name="mimeType">
+          <option value="image/webp">webp</option>
+          <option value="image/jpeg">jpeg</option>
+          <option value="image/png">png</option>
+        </select>
+        <label>quality <input name="quality" type="number" min="1" max="100" value="80" /></label>
+        <label>maxWidth <input name="maxWidth" type="number" min="1" value="1920" /></label>
+        <button type="submit">Compress</button>
+        <p id="status" class="status">idle</p>
+        <img id="preview" alt="" />
+      </form>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
