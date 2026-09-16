@@ -18,7 +18,7 @@ async function readPkg(name) {
 function run(command, args, options = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
-      cwd: root,
+      cwd: options.cwd ?? root,
       stdio: options.capture ? ['ignore', 'pipe', 'pipe'] : 'inherit',
     })
     let output = ''
@@ -38,20 +38,23 @@ function run(command, args, options = {}) {
   })
 }
 
-function parseOtp(argv) {
-  const flag = argv.find((arg) => arg.startsWith('--otp'))
-  if (!flag) return process.env.NPM_OTP
-  if (flag.includes('=')) return flag.slice('--otp='.length)
-  const index = argv.indexOf(flag)
-  return argv[index + 1]
-}
-
 async function whoami() {
   try {
     return await run('npm', ['whoami'], { capture: true })
   } catch {
-    throw new Error('Not logged in to npm. Run `npm login` first.')
+    return undefined
   }
+}
+
+async function ensureLogin() {
+  let user = await whoami()
+  if (user) return user
+
+  stdout.write('Not logged in. Opening npm web login…\n')
+  await run('npm', ['login', '--auth-type=web'])
+  user = await whoami()
+  if (!user) throw new Error('npm login failed.')
+  return user
 }
 
 async function npmVersion(pkgName) {
@@ -63,7 +66,11 @@ async function npmVersion(pkgName) {
 }
 
 async function main() {
-  const user = await whoami()
+  if (!process.stdin.isTTY) {
+    throw new Error('Run `pnpm publish:npm` in a terminal. Publishing uses npm web 2FA.')
+  }
+
+  const user = await ensureLogin()
   stdout.write(`npm user: ${user}\n`)
 
   const local = await Promise.all(
@@ -100,18 +107,21 @@ async function main() {
   await run('pnpm', ['build'])
   await run('pnpm', ['docs:build'])
 
-  stdout.write('Publishing…\n')
-  const filters = changed.flatMap((pkg) => ['--filter', pkg.name])
-  const publishArgs = [
-    ...filters,
-    'publish',
-    '--access',
-    'public',
-    '--no-git-checks',
-  ]
-  const otp = parseOtp(process.argv.slice(2))
-  if (otp) publishArgs.push('--otp', otp)
-  await run('pnpm', publishArgs)
+  stdout.write(
+    'Publishing via pnpm. If npm asks to authenticate, open the URL and confirm with your security key.\n',
+  )
+
+  for (const pkg of changed) {
+    stdout.write(`Publishing ${pkg.name}@${pkg.version}…\n`)
+    await run('pnpm', [
+      '--filter',
+      pkg.name,
+      'publish',
+      '--access',
+      'public',
+      '--no-git-checks',
+    ])
+  }
 
   stdout.write(`Published ${changed.map((pkg) => `${pkg.name}@${pkg.version}`).join(', ')}.\n`)
 }
