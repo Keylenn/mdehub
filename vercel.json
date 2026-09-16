@@ -1,0 +1,4 @@
+{
+  "buildCommand": "pnpm --filter @mdehub/docs build",
+  "outputDirectory": "apps/docs/.vitepress/dist"
+}
