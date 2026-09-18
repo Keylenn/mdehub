@@ -1,6 +1,6 @@
 {
   "name": "@mdehub/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Framework-agnostic WASM image compression",
   "type": "module",
   "sideEffects": false,
@@ -14,7 +14,9 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },

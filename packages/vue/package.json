@@ -1,6 +1,6 @@
 {
   "name": "@mdehub/vue",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Vue composables for @mdehub/core",
   "type": "module",
   "sideEffects": false,
@@ -14,7 +14,9 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
