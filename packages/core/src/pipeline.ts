@@ -1,6 +1,7 @@
 import { decodeImage, encodeImage, maybeResize } from './codecs'
 import { detectMime, normalizeHintMime } from './detect'
 import { computeTargetSize } from './dimensions'
+import { encodeToTarget, looksLikeScreenshot } from './smart'
 import { CompressError, throwIfAborted } from './errors'
 import type { CompressPayload, CompressPayloadResult, InputMimeType } from './types'
 
@@ -40,10 +41,24 @@ export async function processCompress(
 
   throwIfAborted(signal)
   report(onProgress, 0.8)
-  const encoded = await encodeImage(resized, payload.mimeType, payload.quality)
+  const smart = Boolean(payload.smart && mime === 'image/png'
+    && payload.mimeType === 'image/webp' && looksLikeScreenshot(resized))
+  const encode = (quality: number) => encodeImage(resized, payload.mimeType, quality)
+  const encoded = smart && payload.smart
+    ? await encodeToTarget(
+      encode,
+      payload.quality,
+      payload.smart.minQuality,
+      Math.max(2048, Math.round(bytesBefore * payload.smart.targetRatio)),
+      signal,
+      (progress) => report(onProgress, 0.8 + progress * 0.19),
+    )
+    : await encode(payload.quality)
 
+  throwIfAborted(signal)
   report(onProgress, 1)
   return {
+    smart,
     buffer: encoded,
     mimeType: payload.mimeType,
     width: resized.width,

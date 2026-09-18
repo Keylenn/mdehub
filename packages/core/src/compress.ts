@@ -5,8 +5,8 @@ import { compressInWorker } from './worker-client'
 import type {
   CompressOptions,
   CompressPayload,
+  CompressPayloadResult,
   CompressResult,
-  OutputMimeType,
 } from './types'
 
 function isBlob(input: Blob | ArrayBuffer): input is Blob {
@@ -19,6 +19,7 @@ async function toPayload(
 ): Promise<CompressPayload> {
   if (isBlob(input)) {
     return {
+      smart: options.smart,
       buffer: await input.arrayBuffer(),
       hintMime: input.type || undefined,
       mimeType: options.mimeType,
@@ -30,6 +31,7 @@ async function toPayload(
     }
   }
   return {
+    smart: options.smart,
     buffer: input,
     hintMime: undefined,
     mimeType: options.mimeType,
@@ -41,15 +43,9 @@ async function toPayload(
   }
 }
 
-function toResult(payloadResult: {
-  buffer: ArrayBuffer
-  mimeType: OutputMimeType
-  width: number
-  height: number
-  bytesBefore: number
-  bytesAfter: number
-}): CompressResult {
+function toResult(payloadResult: CompressPayloadResult): CompressResult {
   return {
+    smart: payloadResult.smart ?? false,
     blob: new Blob([payloadResult.buffer], { type: payloadResult.mimeType }),
     width: payloadResult.width,
     height: payloadResult.height,

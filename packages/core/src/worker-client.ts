@@ -38,6 +38,7 @@ export function compressInWorker(
   const request: WorkerRequest = {
     id,
     buffer,
+    smart: payload.smart ?? false,
     hintMime: payload.hintMime,
     mimeType: payload.mimeType,
     quality: payload.quality,

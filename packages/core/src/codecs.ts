@@ -28,7 +28,12 @@ async function encodePng(image: ImageData): Promise<ArrayBuffer> {
 
 async function encodeWebp(image: ImageData, quality: number): Promise<ArrayBuffer> {
   const { encode } = await import('@jsquash/webp')
-  return encode(image, { quality })
+  return encode(image, {
+    quality,
+    method: 6,
+    alpha_quality: 100,
+    use_sharp_yuv: 1,
+  })
 }
 
 async function resizeImage(

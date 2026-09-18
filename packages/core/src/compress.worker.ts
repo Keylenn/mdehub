@@ -15,6 +15,7 @@ scope.addEventListener('message', async (event) => {
   const { id, ...rest } = event.data
   try {
     const result = await processCompress({
+      smart: rest.smart ?? false,
       buffer: rest.buffer,
       hintMime: rest.hintMime,
       mimeType: rest.mimeType,
